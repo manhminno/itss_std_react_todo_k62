@@ -1,10 +1,9 @@
-import React, { useEffect, useState }  from 'react'
-import './App.css';
 import Todo from './components/todo'
 import './styles/main.css'
 import Login from "./components/Login";
+import Upload from "./components/Upload";
 
-import { auth, storeUserInfo } from "./lib/firebase";
+import { auth, storeUserInfo, updateUser } from "./lib/firebase";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -19,15 +18,20 @@ function App() {
        setUser(newUser);
      });
    }, []);
+
+   const handleImageChanged = async downlodUrl => {
+    await updateUser(user, downlodUrl);
+  }
+
    const logout = () => {
      auth.signOut();
    };
-
    const HeaderContent = () => {
      if (user) {
        return (
          <div class="navbar-end">
            <div class="navbar-item">
+             <Upload userImage={user.image} onSletctedImage={handleImageChanged} />
              {user.name}
            </div>
            <div class="navbar-item">
@@ -39,7 +43,7 @@ function App() {
        return (<Login />)
      }
    }
-   return (
+  return (
     <div className="container is-fluid">
     <header class="navbar">
          {loading ? (
@@ -56,5 +60,4 @@ function App() {
     </div>
   );
 }
-
-export default App; 
+export default App;
